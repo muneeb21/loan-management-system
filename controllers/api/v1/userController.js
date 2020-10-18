@@ -15,11 +15,19 @@ module.exports.userSignup = async function(req, res)  {
 				message:
 					"This email is already registered, try with another email or login instead",
 			});
-		}
+        }
+
+        if(userType=="agent"){
+            return res.status(200).json({
+				message:
+					"Thanks for applying. Kindly wait for the approval!",
+			});
+        }
+        
 
 		
         //  Else register a new user
-		const newUser=await User.create( { name, email, password });
+		const newUser=await User.create( { name, email, password, userType });
 
 		
 
