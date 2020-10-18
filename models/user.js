@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    isApproved: {
+        type: Boolean,
+        required: true
+    },
     loans: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
