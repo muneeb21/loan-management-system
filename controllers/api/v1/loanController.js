@@ -2,7 +2,7 @@
 const User=require('../../../models/user');
 const loan = require('../../../models/loan');
 const jwt = require('jsonwebtoken');
-
+const crypto=require('crypto');
 
 
 // new loan request
@@ -22,24 +22,46 @@ module.exports.newLoanRequest= async function(req,res){
         
     }
     
-    if(user.userType=='customer'){
         const principle=req.body.principle;
-        const interest=calculateInterest(principle);
+        const interestRate=calculateInterest(principle);
         const monthsToRepay=req.body.timetorepay;
         const status="NEW";
-        const repaymentAmount=calculateAmount(principle,monthsToRepay);
+        const repaymentAmount=calculateAmount(principle,monthsToRepay,interest);
         const emi=repaymentAmount/monthsToRepay;
         const id=req.params.id;
 
-        const newRequest=await Loan.create( { user:id, principle:principle,interest:interest,monthsToRepay:monthsToRepay,
+    if(user.userType=='customer'){
+       
+
+        const newRequest=await Loan.create( { user:id, principle:principle,interest:interestRate,monthsToRepay:monthsToRepay,
         repaymentAmount:repaymentAmount,emi:emi});
 
+        user.loans.unshift(report);
+		await user.save();
 
         return res.json(200, {
             message: 'loan request made successfully',
             
             
         })
+    }
+
+    if(user.userType=="agent" && user.isApproved==true){
+      const name= req.body.name;
+      const email= req.body.email;
+       const tempUser= await User.findOne({email:email});
+       if(tempUser){
+        const newRequest=await Loan.create( { user:tempUser.user, principle:principle,interest:interestRate,monthsToRepay:monthsToRepay,
+            repaymentAmount:repaymentAmount,emi:emi});
+       }
+       user.loans.unshift(report);
+       await user.save();
+
+       return res.json(200, {
+        message: 'loan request made successfully',
+        
+        
+    })
     }
 
     
