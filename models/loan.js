@@ -13,24 +13,18 @@ const loanSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    interest: {
+    interestRate: {
         type: Number,
         required: true,
         unique: true
     },
     
-    loanType: {
-        type: String,
-        required: true
-    },
+    
     monthsToRepay: {
         type: Number,
         required: true
     },
-    collateral: {
-        type: String,
-        required: true
-    },
+   
     repaymentAmount: {
         type: Number,
         required: true

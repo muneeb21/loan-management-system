@@ -18,3 +18,10 @@ module.exports.calculateAmount=function(principle,monthsToRepay,interestRate){
   return principle+totalInterest+applicationFee;
 
 }
+
+// module.exports.filterLoan=function(loans,filter){
+//     const data=[];
+//     for(let i=0;i<loans.length;i++){
+//         if(loans[i])
+//     }
+// }

@@ -12,7 +12,7 @@ module.exports.userSignup = async function(req, res)  {
 
 		// Check if user is already Registered
 		if (user) {
-			return res.status(200).json({
+			return res.status(400).json({
 				message:
 					"This email is already registered, try with another email or login instead",
 			});
@@ -24,22 +24,23 @@ module.exports.userSignup = async function(req, res)  {
         const loans=[];
         const isApproved=false;
         if(userType=="agent"){
+            // change object shorthand property
             const newUser=await User.create( { name:name, email:email,password: hashedPwd,userType: userType,lsApproved:isApproved,loans:loans });
 
-            return res.status(200).json({
+            return res.status(201).json({
 				message:
 					"Thanks for applying. Kindly wait for the approval!",
 			});
         }
         
-
+// add condition
 		isApproved=true;
-        //  Else register a new user
+        
 		const newUser=await User.create( { name:name, email:email,password: hashedPwd,userType: userType,lsApproved:isApproved,loans:loans });
 
 		
 
-		return res.status(200).json({
+		return res.status(201).json({
 			message: `Registration successful`,
 			data:  {
                 token: jwt.sign(newUser.toJSON(), 'codeial', {expiresIn:  '90000000000'})
