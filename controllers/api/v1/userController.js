@@ -220,3 +220,100 @@ module.exports.listUsers= async function(req,res){
 
 
 
+// Agent approval requests
+
+module.exports.agentRequestList=async function(req,res){
+
+    try{
+        let user = await User.findById(req.params.id);
+
+        if (!user){
+            return res.json(422, {
+                message: "Invalid user "
+			});
+			
+		}
+
+		
+		
+			
+
+            if(user.userType=='admin'){
+                let agent = await User.find({isApproved:false}).populate({
+                    // Dont populate sensitive/redundant fields
+                    path: "user",
+                    select: "-password -__v",
+                    
+                }).polulate("-password -__v");
+              
+             
+                
+			   
+                return res.json(200, {
+                    message: 'here is the list of agent requests',
+                    data:  agent
+                });
+            }
+
+
+            i
+
+            return res.json(422, {
+                message: 'Unauthorised user!',
+                
+            });
+       
+
+    }catch(err){
+        console.log('********', err);
+        return res.json(500, {
+            message: "Internal Server Error"
+        });
+    }
+}
+
+// agent request approve
+
+module.exports.approveAgent = async function(req, res){
+
+    try{
+        let user = await User.findById(req.params.id);
+
+        if (!user){
+            return res.json(422, {
+                message: "Invalid user "
+			});
+			
+		}
+
+		
+			
+
+            if(user.userType=='admin'){
+
+          Loan.findByIdAndUpdate(req.body.loanId, { isApproved: true }, function (err, docs) { 
+                     if (err){ 
+                    console.log(err) 
+                       } 
+                   else{ 
+                      console.log("Updated User : ", docs); 
+                       } 
+            });
+                return res.json(200, {
+                    message: 'Agent Approved successfully',
+                    
+                });
+            }
+            return res.json(401, {
+                message: 'Unuthorised user',
+                
+            });
+       
+
+    }catch(err){
+        console.log('********', err);
+        return res.json(500, {
+            message: "Internal Server Error"
+        });
+    }
+}
