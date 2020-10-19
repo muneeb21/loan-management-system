@@ -23,7 +23,7 @@ const loanSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    timetorepay: {
+    monthsToRepay: {
         type: Number,
         required: true
     },
