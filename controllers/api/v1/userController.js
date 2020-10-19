@@ -136,7 +136,7 @@ module.exports.sendData= async function(req,res){
             
         });
     }
-
+ 
     return res.json(200, {
         message: 'Sign in successful',
         data:   user.loans
