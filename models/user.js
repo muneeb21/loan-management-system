@@ -13,17 +13,22 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    phone: {
+        type: Number,
+        unique:true
+    },
     password: {
         type: String,
-        required: true
+        required: true,
+        
     },
     userType: {
         type: String,
         required: true
     },
     isApproved: {
-        type: Boolean,
-        required: true
+        type: Boolean
+        
     },
     loans: [
 		{

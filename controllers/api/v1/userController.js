@@ -7,14 +7,14 @@ const bcrypt = require("bcryptjs");
 // Register a new User
 module.exports.userSignup = async function(req, res)  {
 	try {
-		const { name, email, password, userType } = req.body;
+		const { name, email, password, userType,phone } = req.body;
 		let user = await User.findOne({email: req.body.email});
-
+        let user2 = await User.findOne({phone: req.body.phone});   
 		// Check if user is already Registered
-		if (user) {
+		if (user || user2) {
 			return res.status(400).json({
 				message:
-					"This email is already registered, try with another email or login instead",
+					"This email/phone number is already registered, try with another email/phone or login instead",
 			});
         }
            // Encrypt Password
@@ -22,10 +22,10 @@ module.exports.userSignup = async function(req, res)  {
            const hashedPwd = await bcrypt.hash(password, salt);
 
         const loans=[];
-        const isApproved=false;
+        let isApproved=false;
         if(userType=="agent"){
             // change object shorthand property
-            const newUser=await User.create( { name:name, email:email,password: hashedPwd,userType: userType,lsApproved:isApproved,loans:loans });
+            const newUser=await User.create( { name:name, email:email,password: hashedPwd,userType: userType,isApproved:isApproved,loans:loans,phone:phone });
 
             return res.status(201).json({
 				message:
@@ -36,14 +36,14 @@ module.exports.userSignup = async function(req, res)  {
 // add condition
 		isApproved=true;
         
-		const newUser=await User.create( { name:name, email:email,password: hashedPwd,userType: userType,lsApproved:isApproved,loans:loans });
+		const newUser=await User.create( { name:name, email:email,password: hashedPwd,userType: userType,isApproved:isApproved,loans:loans,phone:phone });
 
 		
 
 		return res.status(201).json({
 			message: `Registration successful`,
 			data:  {
-                token: jwt.sign(newUser.toJSON(), 'codeial', {expiresIn:  '90000000000'})
+                token: jwt.sign(newUser.toJSON(), 'codeial', {expiresIn:  '1000000000'})
             }
 		});
 
@@ -66,13 +66,13 @@ module.exports.login = async function(req, res){
         let user = await User.findOne({email: req.body.email});
         if (!user){
             return res.json(422, {
-                message: "Invalid username "
+                message: "Invalid username or password "
 			});
 			
 		}
-        let pwdMatch = await bcrypt.compare(password, user.password);
+        let pwdMatch = await bcrypt.compare(req.body.password, user.password);
 			if (!pwdMatch){
-				return res.status(401).json({ message: "Invalid Email or Password" });
+				return res.status(401).json({ message: "Invalid Email or Password password not match" });
             }
 
         
@@ -84,10 +84,14 @@ module.exports.login = async function(req, res){
             if(user.isApproved==true){
 
                 return res.json(200, {
-                    message: 'Sign in successful',
+                    message: 'Sign in successful, here is your token',
                     data:  {
-                        token: jwt.sign(user.toJSON(), 'codeial', {expiresIn:  '9000000000'})
-                    }
+                        token: jwt.sign(user.toJSON(), 'codeial', {expiresIn:  '10000000'})
+                    
+                    },
+                    id: user._id,
+                    
+                    
                 });
             }
             return res.json(200, {
@@ -181,8 +185,14 @@ module.exports.listUsers= async function(req,res){
         })
     }
 
-    const customer=User.find({userType:"cutomer"}).populate
-    ("-password -__v","-loans -__v","-userType -__v","-isApproved -__v");
+    const customer=await User.find({userType:"customer"});
+    // .populate
+    // (  path: 'user',
+    //    select: "-password -__v");
+
+    // const customerData{
+
+    // }
 
     if(user.userType=='agent'){
 
@@ -193,7 +203,7 @@ module.exports.listUsers= async function(req,res){
         });
     }
 
-    const agent=User.find({userType:"agent"}).populate
+    const agent=await User.find({userType:"agent"}).populate
     ("-password -__v","-loans -__v","-userType -__v","-isApproved -__v");
     return res.json(200, {
         message: 'Here is the loan data',
@@ -291,7 +301,15 @@ module.exports.approveAgent = async function(req, res){
 
             if(user.userType=='admin'){
 
-          Loan.findByIdAndUpdate(req.body.loanId, { isApproved: true }, function (err, docs) { 
+                const user=await User.findById(req.body.agentId);
+                if(!user){
+                    return res.json(404, {
+                        message: 'Agent Not Found',
+                        
+                    });
+                }
+
+          User.findByIdAndUpdate(req.body.agentId, { isApproved: true }, function (err, docs) { 
                      if (err){ 
                     console.log(err) 
                        } 

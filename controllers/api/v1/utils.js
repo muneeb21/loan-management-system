@@ -13,7 +13,7 @@ module.exports.calculateInterest=function(principle){
 
 module.exports.calculateAmount=function(principle,monthsToRepay,interestRate){
   const applicationFee= 500;
-  const interestPerMonth= (principle/100)*interest;
+  const interestPerMonth= (principle/100)*interestRate;
   const totalInterest= interestPerMonth*monthsToRepay;
   return principle+totalInterest+applicationFee;
 

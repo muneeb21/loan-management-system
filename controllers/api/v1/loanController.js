@@ -3,7 +3,37 @@ const User=require('../../../models/user');
 const Loan = require('../../../models/loan');
 const jwt = require('jsonwebtoken');
 const crypto=require('crypto');
-const Utils = require('./utils');
+// const Utils = require('./utils');
+
+
+function calculateInterest(principle){
+    if(principle>=10000 && principle<500000){
+        return 2;
+    }
+    if(principle>=50000 && principle<100000){
+        return 3;
+    }
+
+    if(principle>=10000){
+        return 4;
+    }
+}
+
+
+
+function calculateAmount(principle,monthsToRepay,interestRate){
+    const applicationFee= 500;
+    const p=principle;
+    const interestPerMonth= (principle/100)*interestRate;
+    const totalInterest= interestPerMonth*monthsToRepay;
+    console.log("totalInterest",totalInterest);
+    console.log("interestPerMonth",interestPerMonth);
+
+     const x=totalInterest+applicationFee+parseInt(p);
+    
+    return x;
+  
+  }
 
 // const userLoan=require('./userController');
 
@@ -25,22 +55,28 @@ module.exports.newLoanRequest= async function(req,res){
         });
         
     }
-         
+         console.log(req.body);
+        
         const principle=req.body.principle;
-        const interestRate=Utils.calculateInterest(principle);
-        const monthsToRepay=req.body.timetorepay;
+        const interestRate=calculateInterest(principle);
+        const monthsToRepay=req.body.monthsToRepay;
         const status="NEW";
-        const repaymentAmount=Utils.calculateAmount(principle,monthsToRepay,interest);
+        const repaymentAmount=calculateAmount(principle,monthsToRepay,interestRate);
         const emi=repaymentAmount/monthsToRepay;
         const id=req.params.id;
+        console.log(principle,interestRate,monthsToRepay,status,repaymentAmount);
 
     if(user.userType=='customer'){
        
 
         const newRequest=await Loan.create( { user:id, principle:principle,interest:interestRate,monthsToRepay:monthsToRepay,
-        repaymentAmount:repaymentAmount,emi:emi});
+        repaymentAmount:repaymentAmount,emi:emi,status:status});
 
-        user.loans.unshift(report);
+        
+
+        // console.log(newRequest);
+
+        user.loans.unshift(newRequest);
 		await user.save();
 
         return res.json(200, {
@@ -51,16 +87,23 @@ module.exports.newLoanRequest= async function(req,res){
     }
 
     if(user.userType=="agent" && user.isApproved==true){
-      const name= req.body.name;
+    //   const name= req.body.name;
       const email= req.body.email;
        const tempUser= await User.findOne({email:email});
        if(tempUser){
-        const newRequest=await Loan.create( { user:tempUser.user, principle:principle,interest:interestRate,monthsToRepay:monthsToRepay,
-            repaymentAmount:repaymentAmount,emi:emi});
-       }
-       user.loans.unshift(report);
-       await user.save();
 
+        // return res.json(200, {
+        //     message: 'loan request made successfully',
+        //     id: tempUser._id
+            
+        // })
+          const userId=tempUser._id;
+        const newRequest=await Loan.create( { user:userId, principle:principle,interestRate:interestRate,monthsToRepay:monthsToRepay,
+            repaymentAmount:repaymentAmount,emi:emi,status:status});
+       
+       tempUser.loans.unshift(newRequest);
+       await tempUser.save();
+        }
        return res.json(200, {
         message: 'loan request made successfully',
         
@@ -110,7 +153,7 @@ module.exports.approveLoan = async function(req, res){
 
             if(user.userType=='admin'){
 
-          Loan.findByIdAndUpdate(req.body.loanId, { status: 'APPROVE' }, function (err, docs) { 
+          Loan.findByIdAndUpdate(req.body.loanId, { status: 'APPROVED' }, function (err, docs) { 
                      if (err){ 
                     console.log(err) 
                        } 

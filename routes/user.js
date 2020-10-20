@@ -32,7 +32,7 @@ router.get(
 	userController.agentRequestList
 );
 
-router.get(
+router.post(
 	"/approveAgent/:id",
 	passport.authenticate("jwt", { session: false }),
 	userController.approveAgent
