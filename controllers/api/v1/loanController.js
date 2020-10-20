@@ -7,7 +7,7 @@ const crypto=require('crypto');
 
 
 function calculateInterest(principle){
-    if(principle>=10000 && principle<500000){
+    if(principle>=10000 && principle<50000){
         return 2;
     }
     if(principle>=50000 && principle<100000){
@@ -59,6 +59,7 @@ module.exports.newLoanRequest= async function(req,res){
         
         const principle=req.body.principle;
         const interestRate=calculateInterest(principle);
+        
         const monthsToRepay=req.body.monthsToRepay;
         const status="NEW";
         const repaymentAmount=calculateAmount(principle,monthsToRepay,interestRate);
@@ -244,23 +245,32 @@ module.exports.editLoan=async function(req,res){
 
             if(user.userType=='agent' && user.isApproved==true){
 
-              let loan=await Loan.find(req.body.loanId);
+              let loan=await Loan.findById(req.body.loanId);
               if(loan){
                 if(loan.status!="APPROVED"){
 
-                let obj={
-                    ...req.body
+                let date=new Date();
+
+                let loanHistory={
+                 loanId : loan._id,
+                 previousStatus: loan.status,
+                 previousPrinciple: loan.principle,
+                 previousMonthsToRepay: loan.monthsToRepay,
+                 previousEmi: loan.emi,
+                 previousRepaymentAmount  : loan.repaymentAmount,
+                 dateOfEdit : date
                 }
-                delete obj[req.body.loadId];
-                const{
-                    principle,
-                    monthsToRepay,
-                    }=req.body;
+                loan.history.unshift(loanHistory);
+                await loan.save();
+             
+                    const principle=req.body.principle;
+                    const monthsToRepay= req.body.monthsToRepay;
                     const interestRate=calculateInterest(principle);
                     const repaymentAmount=calculateAmount(principle,interestRate,monthsToRepay);
-
+                    const emi=repaymentAmount/monthsToRepay;
+                    const status="NEW";
                 
-                Loan.findByIdAndUpdate(req.body.loanId, { principle,interestRate,monthsToRepay,repaymentAmount }, function (err, docs) { 
+                Loan.findByIdAndUpdate(req.body.loanId, { principle,interestRate,monthsToRepay,repaymentAmount,emi,status }, function (err, docs) { 
                     if (err){ 
                    console.log(err) 
                       } 
@@ -321,12 +331,7 @@ module.exports.allLoans=async function(req,res){
 			
 
             if(user.userType=='cutomer'){
-                let customer = await User.findById(req.body.params).populate({
-                    // Dont populate sensitive/redundant fields
-                    path: "user",
-                    select: "-password -__v",
-                    
-                }).polulate("-password -__v");
+                let customer = await User.findById(req.body.params).select("-user");                   
               
              
                 
@@ -339,10 +344,8 @@ module.exports.allLoans=async function(req,res){
 
 
             if(user.userType=="agent" && user.isApproved==true || user.userType=="admin"){
-                let loans=await Loan.findOne().populate({
-                    path:"user",
-                    select: "-password -__v",
-                });
+                let loans=await Loan.find().select("-user");
+                    
 
                 return res.json(200, {
                     message: 'here is the list of loans',

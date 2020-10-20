@@ -33,6 +33,11 @@ const loanSchema = new mongoose.Schema({
         
     },
     
+    history: [
+		{
+			type: Object,
+		},
+	],
     status: {
 		type: String,
 		enum: ["NEW", "REJECTED", "APPROVED"],

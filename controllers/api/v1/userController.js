@@ -185,14 +185,8 @@ module.exports.listUsers= async function(req,res){
         })
     }
 
-    const customer=await User.find({userType:"customer"});
-    // .populate
-    // (  path: 'user',
-    //    select: "-password -__v");
-
-    // const customerData{
-
-    // }
+    const customer=await User.find({userType:"customer"}).select("-password");
+    
 
     if(user.userType=='agent'){
 
@@ -203,8 +197,7 @@ module.exports.listUsers= async function(req,res){
         });
     }
 
-    const agent=await User.find({userType:"agent"}).populate
-    ("-password -__v","-loans -__v","-userType -__v","-isApproved -__v");
+    const agent=await User.find({userType:"agent"}).select("-password");
     return res.json(200, {
         message: 'Here is the loan data',
         data:  {
@@ -249,12 +242,9 @@ module.exports.agentRequestList=async function(req,res){
 			
 
             if(user.userType=='admin'){
-                let agent = await User.find({isApproved:false}).populate({
+                let agent = await User.find({isApproved:false}).select("-password");
                     // Dont populate sensitive/redundant fields
-                    path: "user",
-                    select: "-password -__v",
-                    
-                }).polulate("-password -__v");
+                   
               
              
                 
