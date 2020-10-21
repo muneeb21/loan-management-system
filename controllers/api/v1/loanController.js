@@ -328,17 +328,17 @@ module.exports.allLoans=async function(req,res){
 
 		
 		
-			
-
-            if(user.userType=='cutomer'){
-                let customer = await User.findById(req.body.params).select("-user");                   
+	  		
+     
+            if(user.userType=='customer'){
+                let customerLoans = await Loan.find({user:req.params.id}).select("-user");                   
               
-             
+                
                 
 			   
                 return res.json(200, {
                     message: 'here is the list of loans',
-                    data:  customer.loans
+                    data:  customerLoans
                 });
             }
 

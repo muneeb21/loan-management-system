@@ -30,7 +30,7 @@ router.post(
 );
 
 
-router.post(
+router.get(
 	"/allLoans/:id",
 	passport.authenticate("jwt", { session: false }),
 	loanController.allLoans

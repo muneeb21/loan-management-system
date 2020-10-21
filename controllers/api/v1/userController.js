@@ -188,7 +188,7 @@ module.exports.listUsers= async function(req,res){
     if(user.userType=='customer'){
         
         return res.json(401, {
-            message: 'Not Authurised ',
+            message: 'Not Authurised',
             
             
         })
@@ -200,7 +200,7 @@ module.exports.listUsers= async function(req,res){
     if(user.userType=='agent'){
 
          return res.json(200, {
-            message: 'Here is the loan data',
+            message: 'Here are all the users',
             data:   customer
             
         });
@@ -208,7 +208,7 @@ module.exports.listUsers= async function(req,res){
 
     const agent=await User.find({userType:"agent"}).select("-password");
     return res.json(200, {
-        message: 'Here is the loan data',
+        message: 'Here are all the users',
         data:  {
             customers:customer,
             agents:agent
