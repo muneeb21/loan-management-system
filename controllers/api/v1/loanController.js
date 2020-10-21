@@ -371,64 +371,55 @@ module.exports.allLoans=async function(req,res){
 
 
 // loans by filter
-// module.exports.LoansbyFilter=async function(req,res){
+module.exports.LoansbyFilter=async function(req,res){
       
-//     try{
-//         let user = await User.findById(req.params.id);
+    try{
+        let user = await User.findById(req.params.id);
 
-//         if (!user){
-//             return res.json(422, {
-//                 message: "Invalid user "
-// 			});
+        if (!user){
+            return res.json(422, {
+                message: "Invalid user "
+			});
 			
-// 		}
+		}
 
 		
 		
 			
 
-//             if(user.userType=='cutomer'){
-//                 let customer = await Loan.find({user:req.params.id}).populate({
-//                     // Dont populate sensitive/redundant fields
-//                     path: "user",
-//                     select: "-password -__v",
-                    
-//                 });
+            if(user.userType=='cutomer'){
+                let customer = await Loan.find({user:req.params.id}).select("-user");
               
-//              let data={};
-//              loan
+             
                 
 			   
-//                 return res.json(200, {
-//                     message: 'here is the list of loans',
-//                     data:  customer.loans
-//                 });
-//             }
+                return res.json(200, {
+                    message: 'here is the list of loans',
+                    data:  customer.loans
+                });
+            }
 
 
-//             if(user.userType=="agent" && user.isApproved==true || user.userType=="admin"){
-//                 let loans=await Loan.findOne().populate({
-//                     path:"user",
-//                     select: "-password -__v",
-//                 });
+            if(user.userType=="agent" && user.isApproved==true || user.userType=="admin"){
+                let loans=await Loan.find({status:req.body.status});
 
-//                 return res.json(200, {
-//                     message: 'here is the list of loans',
-//                     data:  loans
-//                 });
+                return res.json(200, {
+                    message: 'here is the list of loans',
+                    data:  loans
+                });
 
-//             }
+            }
 
-//             return res.json(422, {
-//                 message: 'Unauthorised user!',
+            return res.json(422, {
+                message: 'Unauthorised user!',
                 
-//             });
+            });
        
 
-//     }catch(err){
-//         console.log('********', err);
-//         return res.json(500, {
-//             message: "Internal Server Error"
-//         });
-//     }
-// }
+    }catch(err){
+        console.log('********', err);
+        return res.json(500, {
+            message: "Internal Server Error"
+        });
+    }
+}

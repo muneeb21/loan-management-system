@@ -3,7 +3,6 @@ const app = express();
 const port = 8000;
 const db = require('./config/mongoose');
 const bcrypt=require('bcryptjs');
-
 // using passport-jwt 
 const passportJwt = require('./config/passport-jwt-strategy');
 
@@ -12,11 +11,14 @@ app.use(express.urlencoded());
 
 // using express router
 
-// const pwd="admin";
-// console.log(pwd,'***');
-// const salt = bcrypt.genSalt(10);
-// const newPwd=bcrypt.hash(pwd, salt);
-// console.log(newPwd);
+// const bcrypt=require('bcryptjs');
+
+
+
+
+// uncomment the below code once, run npm start then comment it again (its for manually entering admin)
+
+
 // const User=require('./models/user');
 
 // bcrypt.genSalt(10, function(err, salt) {
@@ -46,22 +48,8 @@ app.use(express.urlencoded());
 //     });
 // });
 
-// const info={
-//     email:"admin",
-//     phone:123456,
-//     name:"admin",
-//     password:"admin",
-//     loans:[],
-//     userType:"admin",
-//     isApproved:true
-// }
-// User.create(info,function(err){
-//     if(err){
-//         console.log(err);
-        
-//     }
-//     return;
-// })
+
+
 
 
 app.use(express.json());
@@ -75,3 +63,5 @@ app.listen(port, function(err){
 
     console.log(`Server is running on port: ${port}`);
 });
+
+module.exports=app;

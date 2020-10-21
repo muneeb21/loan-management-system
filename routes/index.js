@@ -2,12 +2,11 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 
-const userRoutes = require("./user");
 
 
+// router.use("/loan", loanRoutes);
 
-
-router.use("/user", userRoutes);
+router.use('/user', require('./user'));
 
 
 

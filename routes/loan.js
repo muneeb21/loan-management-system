@@ -36,5 +36,10 @@ router.post(
 	loanController.allLoans
 );
 
+router.post(
+	"/loansByFilter/:id",
+	passport.authenticate("jwt", { session: false }),
+	loanController.LoansbyFilter
+);
 
 module.exports = router;

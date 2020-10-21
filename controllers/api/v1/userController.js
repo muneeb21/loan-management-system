@@ -1,13 +1,13 @@
 
 const User=require('../../../models/user');
-const loan = require('../../../models/loan');
+const Loan = require('../../../models/loan');
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcryptjs");
 
 // Register a new User
 module.exports.userSignup = async function(req, res)  {
 	try {
-		const { name, email, password, userType,phone } = req.body;
+		const { name, email, password, userType,phone,confirmPassword } = req.body;
 		let user = await User.findOne({email: req.body.email});
         let user2 = await User.findOne({phone: req.body.phone});   
 		// Check if user is already Registered
@@ -17,6 +17,15 @@ module.exports.userSignup = async function(req, res)  {
 					"This email/phone number is already registered, try with another email/phone or login instead",
 			});
         }
+         
+        if(confirmPassword!=password){
+            return res.status(422).json({
+				message:
+					"Password and confirm-password not equal",
+			});
+
+        }
+        
            // Encrypt Password
            const salt = await bcrypt.genSalt(10);
            const hashedPwd = await bcrypt.hash(password, salt);
@@ -42,9 +51,9 @@ module.exports.userSignup = async function(req, res)  {
 
 		return res.status(201).json({
 			message: `Registration successful`,
-			data:  {
-                token: jwt.sign(newUser.toJSON(), 'codeial', {expiresIn:  '1000000000'})
-            }
+			// data:  {
+            //     token: jwt.sign(newUser.toJSON(), 'codeial', {expiresIn:  '1000000000'})
+            // }
 		});
 
 	
@@ -65,14 +74,14 @@ module.exports.login = async function(req, res){
     try{
         let user = await User.findOne({email: req.body.email});
         if (!user){
-            return res.json(422, {
-                message: "Invalid username or password "
+            return res.json(401, {
+                message: "Invalid Email or Password"
 			});
 			
 		}
         let pwdMatch = await bcrypt.compare(req.body.password, user.password);
 			if (!pwdMatch){
-				return res.status(401).json({ message: "Invalid Email or Password password not match" });
+				return res.status(401).json({ message: "Invalid Email or Password" });
             }
 
         
@@ -94,7 +103,7 @@ module.exports.login = async function(req, res){
                     
                 });
             }
-            return res.json(200, {
+            return res.json(202, {
                 message: 'Your approval request is still pending',
                 
             });
@@ -111,55 +120,55 @@ module.exports.login = async function(req, res){
 
 // send data
 
-module.exports.sendData= async function(req,res){
+// module.exports.sendData= async function(req,res){
 
-    let user = await User.findById( req.params.id);
+//     let user = await User.findById( req.params.id).select("-password");
 
-    try{
-    if (!user){
-        return res.json(422, {
-            message: "Invalid username "
-        });
+//     try{
+//     if (!user){
+//         return res.json(422, {
+//             message: "Invalid username "
+//         });
         
-    }
+//     }
 
-    if(user.userType=='customer'){
+//     if(user.userType=='customer'){
         
-        return res.json(200, {
-            message: 'Here is the loan data ',
-            data:   user.loans
+//         return res.json(200, {
+//             message: 'Here is the loan data ',
+//             data:   user.loans
             
-        })
-    }
+//         })
+//     }
 
-    if(user.userType=='agent'){
+//     if(user.userType=='agent'){
         
-        return res.json(200, {
-            message: 'Here is the loan data',
-            data:   user.loans
+//         return res.json(200, {
+//             message: 'Here is the loan data',
+//             data:   user.loans
             
-        });
-    }
+//         });
+//     }
  
-    return res.json(200, {
-        message: 'Sign in successful',
-        data:   user.loans
+//     return res.json(200, {
+//         message: 'Sign in successful',
+//         data:   user.loans
         
-    });
+//     });
     
     
 
         
     
 
-}catch(err){
-    console.log('********', err);
-    return res.json(500, {
-        message: "Internal Server Error"
-    });
-}
+// }catch(err){
+//     console.log('********', err);
+//     return res.json(500, {
+//         message: "Internal Server Error"
+//     });
+// }
 
-}
+// }
 
 
 // list users
@@ -236,11 +245,10 @@ module.exports.agentRequestList=async function(req,res){
 			});
 			
 		}
-
-		
-		
-			
-
+          
+         
+        
+        
             if(user.userType=='admin'){
                 let agent = await User.find({isApproved:false}).select("-password");
                     // Dont populate sensitive/redundant fields
@@ -314,6 +322,64 @@ module.exports.approveAgent = async function(req, res){
             }
             return res.json(401, {
                 message: 'Unuthorised user',
+                
+            });
+       
+
+    }catch(err){
+        console.log('********', err);
+        return res.json(500, {
+            message: "Internal Server Error"
+        });
+    }
+}
+
+
+
+// update password
+
+module.exports.updatePassword = async function(req, res){
+
+    try{
+        let user = await User.findById(req.params.id);
+
+        if (!user){
+            return res.json(422, {
+                message: "Invalid user "
+			});
+			
+        }
+        
+        if(req.body.password!=req.body.confirmPassword){
+
+            return res.status(400).json({
+				message:
+					"Password and confirm-password not equal",
+			});
+        }
+
+        let pwdMatch = await bcrypt.compare(req.body.prevPassword, user.password);
+			if (!pwdMatch){
+				return res.status(401).json({ message: "wrong password" });
+            }
+		
+        const salt = await bcrypt.genSalt(10);
+        const hashedPwd = await bcrypt.hash(req.body.password, salt);
+
+            
+
+          User.findByIdAndUpdate(req.params.id, { password: hashedPwd }, function (err, docs) { 
+                     if (err){ 
+                    console.log(err) 
+                       } 
+                   else{ 
+                      console.log("Updated User : ", docs); 
+                       } 
+            });
+                
+            
+            return res.json(200, {
+                message: 'Password Updated Successfully',
                 
             });
        
