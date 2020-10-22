@@ -37,7 +37,7 @@ router.get(
 );
 
 router.post(
-	"/loansByFilter/:id",
+	"/loansbyFilter/:id",
 	passport.authenticate("jwt", { session: false }),
 	loanController.LoansbyFilter
 );

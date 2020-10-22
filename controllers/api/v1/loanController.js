@@ -55,8 +55,16 @@ module.exports.newLoanRequest= async function(req,res){
         });
         
     }
-         console.log(req.body);
-        
+        //  console.log(req.body);
+        if(req.body.principle<10000){
+
+            return res.json(422, {
+                message: 'Enter a valid amount'
+                
+            })
+
+        }
+
         const principle=req.body.principle;
         const interestRate=calculateInterest(principle);
         
@@ -81,9 +89,11 @@ module.exports.newLoanRequest= async function(req,res){
 		await user.save();
 
         return res.json(200, {
-            message: 'loan request made successfully',
-            
-            
+            message: 'Loan request made successfully',
+            data:{
+                loan:newRequest
+            }
+                     
         })
     }
 
@@ -104,17 +114,18 @@ module.exports.newLoanRequest= async function(req,res){
        
        tempUser.loans.unshift(newRequest);
        await tempUser.save();
-        }
+        
        return res.json(200, {
-        message: 'loan request made successfully',
-        
-        
-    })
+        message: 'Loan request made successfully',
+        data: newRequest
+       
+           });
+       }
     }
 
     
 
-    return res.json(200, {
+    return res.json(422, {
         message: 'Loan request cannot be made',
        
         
@@ -337,7 +348,7 @@ module.exports.allLoans=async function(req,res){
                 
 			   
                 return res.json(200, {
-                    message: 'here is the list of loans',
+                    message: 'Here is the list of loans',
                     data:  customerLoans
                 });
             }
@@ -348,7 +359,7 @@ module.exports.allLoans=async function(req,res){
                     
 
                 return res.json(200, {
-                    message: 'here is the list of loans',
+                    message: 'Here is the list of loans',
                     data:  loans
                 });
 
@@ -394,7 +405,7 @@ module.exports.LoansbyFilter=async function(req,res){
                 
 			   
                 return res.json(200, {
-                    message: 'here is the list of loans',
+                    message: 'Here is the list of loans according to a status',
                     data:  customer.loans
                 });
             }
@@ -404,14 +415,14 @@ module.exports.LoansbyFilter=async function(req,res){
                 let loans=await Loan.find({status:req.body.status});
 
                 return res.json(200, {
-                    message: 'here is the list of loans',
+                    message: 'Here is the list of loans according to a status',
                     data:  loans
                 });
 
             }
 
             return res.json(422, {
-                message: 'Unauthorised user!',
+                message: 'Unauthorised user or there are no loans to show!',
                 
             });
        

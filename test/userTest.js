@@ -140,13 +140,6 @@ describe('User', () => {
 
 
 
-// Test for listting users
-
-
-
-
-
-
 // Test for all the admin related functionalities.
 describe('Admin', () => {
     let authToken = "";
@@ -170,7 +163,7 @@ describe('Admin', () => {
 
 
     // Test get list of user route
-    describe('/POST user/listUsers/:id', () => {
+    describe('/GET user/listUsers/:id', () => {
         
 
         // Authorization failed due to not passing jwt token in header
@@ -310,21 +303,10 @@ describe('Admin', () => {
                 });
         });
 
-    
-
-
-      
-    
-    
+        
        
 
     });
-
-
-
-   
-
-    
 
 });
 
