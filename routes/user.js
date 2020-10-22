@@ -33,5 +33,10 @@ router.post(
 	userController.approveAgent
 );
 
+router.post(
+	"/updatePassword/:id",
+	passport.authenticate("jwt", { session: false }),
+	userController.updatePassword
+);
 
 module.exports = router;

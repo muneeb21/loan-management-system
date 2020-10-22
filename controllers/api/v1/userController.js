@@ -70,7 +70,7 @@ module.exports.userSignup = async function(req, res)  {
 			data:  {
                 token: jwt.sign(newUser.toJSON(), 'codeial', {expiresIn:  '1000000000'})
             },
-            id: user._id,
+            // id: user._id,
 		});
 
 	
