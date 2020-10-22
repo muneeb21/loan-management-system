@@ -4,6 +4,7 @@ const passport = require("passport");
 
 const loanController = require("../controllers/api/v1/loanController");
 
+//routes for loan releted quesrries
 
 router.post(
 	"/newLoan/:id",

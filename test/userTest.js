@@ -53,12 +53,11 @@ describe('User', () => {
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(userWrongConfirmPass)
                 .end((err, res) => {
-                    // console.log(res.body);
-                    res.should.have.status(422);
-                    // res.body.should.have.property("status");
+        
+                    res.should.have.status(422); 
                     res.body.should.have.property("message");
                     res.body.message.should.be.eql("Password and confirm-password not equal");
-                    // res.body.status.should.be.eql(422);
+                    
                     done();
                 });
         });
@@ -70,12 +69,11 @@ describe('User', () => {
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(userCorrect)
                 .end((err, res) => {
-                    // console.log(res.body);
+                   
                     res.should.have.status(201);
-                    // res.body.should.have.property("status");
                     res.body.should.have.property("message");
                     res.body.message.should.be.eql("Registration successful");
-                    // res.body.status.should.be.eql(200);
+                    
                     done();
                 });
         });
@@ -96,10 +94,9 @@ describe('User', () => {
                 .end((err, res) => {
                     console.log(res.body);
                     res.should.have.status(401);
-                    // res.body.should.have.property("status");
                     res.body.should.have.property("message");
                     res.body.message.should.be.eql("Invalid Email or Password");
-                    // res.body.status.should.be.eql(401);
+                   
                     done();
                 });
             })
@@ -117,10 +114,9 @@ describe('User', () => {
                 .end((err, res) => {
                     console.log(res.body);
                     res.should.have.status(401);
-                    // res.body.should.have.property("status");
                     res.body.should.have.property("message");
                     res.body.message.should.be.eql("Invalid Email or Password");
-                    // res.body.status.should.be.eql(401);
+                    
                     done();
                 });
             })
@@ -152,7 +148,7 @@ describe('Admin', () => {
         });
     
         User.deleteOne({}, (err) => {
-             user = new User({ name: "admin", email: "admin", password: "admin",phone:"0987",userType:"admin",isApproved:"true" });
+             user = new User({ name: "admin", email: "admin", password: "adminpass",phone:"0987",userType:"admin",isApproved:"true" });
             user.save((err, user) => {
                 authToken = jwt.sign(user.toJSON(), "codeial", { expiresIn: 100000 })
                 done();
@@ -175,10 +171,6 @@ describe('Admin', () => {
                     // console.log(res.body);
                     res.should.have.status(401);
                     res.body.should.be.a('object');
-                    // res.body.should.have.property('status');
-                    // res.body.should.have.property('message');
-                    // res.body.status.should.be.eql(401);
-                    
                     done();
                 });
         });
@@ -244,8 +236,6 @@ describe('Admin', () => {
                     // console.log(res.body);
                     res.should.have.status(401);
                     res.body.should.be.a('object');
-                    
-                    
                     done();
                 });
         });
@@ -296,7 +286,7 @@ describe('Admin', () => {
                     // console.log(res.body);
                     res.should.have.status(404);
                     
-                    // res.body.should.have.property('message');
+                   
                     
                     
                     done();

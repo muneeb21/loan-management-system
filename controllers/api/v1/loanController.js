@@ -1,10 +1,11 @@
 
 const User=require('../../../models/user');
 const Loan = require('../../../models/loan');
-const jwt = require('jsonwebtoken');
-const crypto=require('crypto');
-// const Utils = require('./utils');
 
+
+
+
+// utility function for calculating principle
 
 function calculateInterest(principle){
     if(principle>=10000 && principle<50000){
@@ -19,7 +20,7 @@ function calculateInterest(principle){
     }
 }
 
-
+// utility function for calculating interest
 
 function calculateAmount(principle,monthsToRepay,interestRate){
     const applicationFee= 500;
@@ -35,27 +36,29 @@ function calculateAmount(principle,monthsToRepay,interestRate){
   
   }
 
-// const userLoan=require('./userController');
 
 
 
-// new loan request
+
+// Function for making new loan request
 module.exports.newLoanRequest= async function(req,res){
 
     
 
     try{
-
+        //  if user does not exists then return
         const user = await User.findById(req.params.id);
         
 
-    if (!user){
-        return res.json(422, {
-            message: "Invalid user "
-        });
+           if (!user){
+               return res.json(422, {
+                      message: "Invalid user "
+               });
         
     }
         //  console.log(req.body);
+
+        // Check for principle, do not accept values less than 10000
         if(req.body.principle<10000){
 
             return res.json(422, {
@@ -65,6 +68,8 @@ module.exports.newLoanRequest= async function(req,res){
 
         }
 
+        // store the data of loan
+
         const principle=req.body.principle;
         const interestRate=calculateInterest(principle);
         
@@ -73,17 +78,22 @@ module.exports.newLoanRequest= async function(req,res){
         const repaymentAmount=calculateAmount(principle,monthsToRepay,interestRate);
         const emi=repaymentAmount/monthsToRepay;
         const id=req.params.id;
-        console.log(principle,interestRate,monthsToRepay,status,repaymentAmount);
 
-    if(user.userType=='customer'){
+        // console.log(principle,interestRate,monthsToRepay,status,repaymentAmount);
+ 
+
+        //  You can create a loan only if you are customer or you are an approved agent
+           if(user.userType=='customer'){
        
 
-        const newRequest=await Loan.create( { user:id, principle:principle,interest:interestRate,monthsToRepay:monthsToRepay,
-        repaymentAmount:repaymentAmount,emi:emi,status:status});
+               const newRequest=await Loan.create( { user:id, principle:principle,interest:interestRate,
+                monthsToRepay:monthsToRepay,repaymentAmount:repaymentAmount,emi:emi,status:status});
 
         
 
         // console.log(newRequest);
+
+        // Push the newly created loan in user
 
         user.loans.unshift(newRequest);
 		await user.save();
@@ -97,29 +107,27 @@ module.exports.newLoanRequest= async function(req,res){
         })
     }
 
-    if(user.userType=="agent" && user.isApproved==true){
+    // check for agent
+        if(user.userType=="agent" && user.isApproved==true){
     //   const name= req.body.name;
-      const email= req.body.email;
-       const tempUser= await User.findOne({email:email});
-       if(tempUser){
+          const email= req.body.email;
+          const tempUser= await User.findOne({email:email});
+            if(tempUser){
 
-        // return res.json(200, {
-        //     message: 'loan request made successfully',
-        //     id: tempUser._id
-            
-        // })
-          const userId=tempUser._id;
-        const newRequest=await Loan.create( { user:userId, principle:principle,interestRate:interestRate,monthsToRepay:monthsToRepay,
-            repaymentAmount:repaymentAmount,emi:emi,status:status});
-       
-       tempUser.loans.unshift(newRequest);
-       await tempUser.save();
         
-       return res.json(200, {
-        message: 'Loan request made successfully',
-        data: newRequest
+                const userId=tempUser._id;
+                const newRequest=await Loan.create( { user:userId, principle:principle,
+                interestRate:interestRate,monthsToRepay:monthsToRepay,
+                repaymentAmount:repaymentAmount,emi:emi,status:status});
        
-           });
+                tempUser.loans.unshift(newRequest);
+                await tempUser.save();
+        
+                return res.json(200, {
+                            message: 'Loan request made successfully',
+                            data: newRequest
+        
+                              });
        }
     }
 
@@ -152,7 +160,8 @@ module.exports.approveLoan = async function(req, res){
 
     try{
         let user = await User.findById(req.params.id);
-
+           
+    // Check for user 
         if (!user){
             return res.json(422, {
                 message: "Invalid user "
@@ -160,28 +169,27 @@ module.exports.approveLoan = async function(req, res){
 			
 		}
 
-		
-			
+		// Only admin can change the status of Loan
 
             if(user.userType=='admin'){
 
-          Loan.findByIdAndUpdate(req.body.loanId, { status: 'APPROVED' }, function (err, docs) { 
+                Loan.findByIdAndUpdate(req.body.loanId, { status: 'APPROVED' }, function (err, docs) { 
                      if (err){ 
-                    console.log(err) 
-                       } 
+                         console.log(err) 
+                        } 
                    else{ 
-                      console.log("Updated User : ", docs); 
+                        console.log("Updated data : ", docs); 
                        } 
-            });
-                return res.json(200, {
-                    message: 'Loan Approved successfully',
+                 });
+                    return res.json(200, {
+                       message: 'Loan Approved successfully',
                     
-                });
+                       });
             }
-            return res.json(401, {
-                message: 'Unuthorised user',
+                  return res.json(401, {
+                      message: 'Unuthorised user',
                 
-            });
+                     });
        
 
     }catch(err){
@@ -196,6 +204,7 @@ module.exports.approveLoan = async function(req, res){
 module.exports.rejectLoan=async function(req,res){
 
     try{
+        // Check for user
         let user = await User.findById(req.params.id);
 
         if (!user){
@@ -206,18 +215,18 @@ module.exports.rejectLoan=async function(req,res){
 		}
 
 		
-			
+		// Only admin can reject a loan 
 
             if(user.userType=='admin'){
-
-          Loan.findByIdAndUpdate(req.body.loanId, { status: 'REJECTED' }, function (err, docs) { 
-                     if (err){ 
-                    console.log(err) 
-                       } 
-                   else{ 
-                      console.log("Updated User : ", docs); 
-                       } 
-            });
+        // If user is admin then find the loan and update    
+                Loan.findByIdAndUpdate(req.body.loanId, { status: 'REJECTED' }, function (err, docs) { 
+                        if (err){ 
+                              console.log(err) 
+                            } 
+                        else{ 
+                             console.log("Updated User : ", docs); 
+                            } 
+                    });
                 return res.json(200, {
                     message: 'Loan Rejected',
                     
@@ -243,7 +252,7 @@ module.exports.editLoan=async function(req,res){
 
     try{
         let user = await User.findById(req.params.id);
-
+        // check for the user
         if (!user){
             return res.json(422, {
                 message: "Invalid user "
@@ -251,60 +260,65 @@ module.exports.editLoan=async function(req,res){
 			
 		}
 
-		
+		// Only an agent can edir a loan but he has to be approved himself
 			
-
-            if(user.userType=='agent' && user.isApproved==true){
+        if(user.userType=='agent' && user.isApproved==true){
 
               let loan=await Loan.findById(req.body.loanId);
               if(loan){
-                if(loan.status!="APPROVED"){
-
-                let date=new Date();
-
-                let loanHistory={
-                 loanId : loan._id,
-                 previousStatus: loan.status,
-                 previousPrinciple: loan.principle,
-                 previousMonthsToRepay: loan.monthsToRepay,
-                 previousEmi: loan.emi,
-                 previousRepaymentAmount  : loan.repaymentAmount,
-                 dateOfEdit : date
-                }
-                loan.history.unshift(loanHistory);
-                await loan.save();
-             
-                    const principle=req.body.principle;
-                    const monthsToRepay= req.body.monthsToRepay;
-                    const interestRate=calculateInterest(principle);
-                    const repaymentAmount=calculateAmount(principle,interestRate,monthsToRepay);
-                    const emi=repaymentAmount/monthsToRepay;
-                    const status="NEW";
+        //  Loan cannot be edited if it is approved 
                 
-                Loan.findByIdAndUpdate(req.body.loanId, { principle,interestRate,monthsToRepay,repaymentAmount,emi,status }, function (err, docs) { 
-                    if (err){ 
-                   console.log(err) 
-                      } 
-                  else{ 
-                     console.log("Updated loan : ", docs); 
-                      } 
-           });
-               return res.json(200, {
-                   message: 'Loan edited!',
+                 if(loan.status!="APPROVED"){
+
+                     let date=new Date();
+
+        //  Maintain a history of the loan before editing that is create an object abd push it to the history array of loan
+                     let loanHistory={
+                        loanId : loan._id,
+                        previousStatus: loan.status,
+                        previousPrinciple: loan.principle,
+                        previousMonthsToRepay: loan.monthsToRepay,
+                        previousEmi: loan.emi,
+                        previousRepaymentAmount  : loan.repaymentAmount,
+                        dateOfEdit : date
+                        }
+         
+                        loan.history.unshift(loanHistory);
+                        await loan.save();
+            //  Calculate new loan parameters and update
+                        const principle=req.body.principle;
+                        const monthsToRepay= req.body.monthsToRepay;
+                        const interestRate=calculateInterest(principle);
+                        const repaymentAmount=calculateAmount(principle,interestRate,monthsToRepay);
+                        const emi=repaymentAmount/monthsToRepay;
+                        const status="NEW";
+                
+                        Loan.findByIdAndUpdate(req.body.loanId, { principle,interestRate,monthsToRepay,repaymentAmount,emi,status }, function (err, docs) { 
+                          if (err){ 
+                            console.log(err) 
+                          } 
+                          else{ 
+                             console.log("Updated loan : ", docs); 
+                          } 
+                        });
+            // Return success after editting loan
+                        return res.json(200, {
+                             message: 'Loan edited!',
                    
-               });
+                            });
               }
-             
+            // Else loan is already approved and cant edit it 
               return res.json(401, {
                 message: 'Loan already approved, cannot update, Sorry!',
                 
-            });
+                 });
         
             }
-            return res.json(401, {
-                message: 'Loan does not exist',
+        // Now either loan does not exist or user is unauthorised to edit
+               return res.json(401, {
+                  message: 'Loan does not exist',
                 
-            });
+                   });
               
             }
         
@@ -324,10 +338,11 @@ module.exports.editLoan=async function(req,res){
 
 
 
-
+// Functions to list all loans
 module.exports.allLoans=async function(req,res){
       
     try{
+    // Check for user
         let user = await User.findById(req.params.id);
 
         if (!user){
@@ -340,20 +355,17 @@ module.exports.allLoans=async function(req,res){
 		
 		
 	  		
-     
+    //  If it is a customer then he can only list his own loans
             if(user.userType=='customer'){
-                let customerLoans = await Loan.find({user:req.params.id}).select("-user");                   
-              
-                
-                
-			   
+                let customerLoans = await Loan.find({user:req.params.id}).select("-user");                  
+                			   
                 return res.json(200, {
                     message: 'Here is the list of loans',
                     data:  customerLoans
                 });
             }
 
-
+    // An agent or an admin can see all the loans
             if(user.userType=="agent" && user.isApproved==true || user.userType=="admin"){
                 let loans=await Loan.find().select("-user");
                     
@@ -364,7 +376,7 @@ module.exports.allLoans=async function(req,res){
                 });
 
             }
-
+    // If an agent is still not approves then
             return res.json(422, {
                 message: 'Unauthorised user!',
                 
@@ -381,10 +393,11 @@ module.exports.allLoans=async function(req,res){
 
 
 
-// loans by filter
+// Function to get Loans by filter like status
 module.exports.LoansbyFilter=async function(req,res){
       
     try{
+   // check for user 
         let user = await User.findById(req.params.id);
 
         if (!user){
@@ -394,23 +407,18 @@ module.exports.LoansbyFilter=async function(req,res){
 			
 		}
 
-		
-		
-			
-
+	// If user is a customer then he can filter onlly his loans
             if(user.userType=='cutomer'){
-                let customer = await Loan.find({user:req.params.id}).select("-user");
+                let customerLoans = await Loan.find({user:req.params.id},{status:req.body.status}).select("-user");
               
              
-                
-			   
                 return res.json(200, {
                     message: 'Here is the list of loans according to a status',
-                    data:  customer.loans
+                    data:  customerLoans
                 });
             }
 
-
+    // An agent and an admin can list all the loans according to a status
             if(user.userType=="agent" && user.isApproved==true || user.userType=="admin"){
                 let loans=await Loan.find({status:req.body.status});
 

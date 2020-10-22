@@ -8,7 +8,8 @@ const bcrypt = require("bcryptjs");
 module.exports.userSignup = async function(req, res)  {
 	try {
 		const { name, email, password, userType,phone,confirmPassword } = req.body;
-		let user = await User.findOne({email: req.body.email});
+        // User should have unique email and phone number
+        let user = await User.findOne({email: req.body.email});
         let user2 = await User.findOne({phone: req.body.phone});   
 		// Check if user is already Registered
 		if (user || user2) {
@@ -17,7 +18,7 @@ module.exports.userSignup = async function(req, res)  {
 					"This email/phone number is already registered, try with another email/phone or login instead",
 			});
         }
-         
+        // check if confirm password and password match 
         if(confirmPassword!=password){
             return res.status(422).json({
 				message:
@@ -25,15 +26,30 @@ module.exports.userSignup = async function(req, res)  {
 			});
 
         }
-        
-           // Encrypt Password
+
+        // Check the length of the password(it should be greater than 7)
+        if(password.length<7){
+            return res.status(401).json({
+				message:
+					"The password length is too small",
+			});
+
+        }
+           
+        // Encrypt Password
            const salt = await bcrypt.genSalt(10);
            const hashedPwd = await bcrypt.hash(password, salt);
 
-        const loans=[];
+        // Initialize an array of loans that is empty   
+           const loans=[];
+        
+        // An agent is initially not approved
         let isApproved=false;
+        
+        // If user type is agent then do the following and admin would decide whether to approve user or not 
         if(userType=="agent"){
-            // change object shorthand property
+            
+            
             const newUser=await User.create( { name:name, email:email,password: hashedPwd,userType: userType,isApproved:isApproved,loans:loans,phone:phone });
 
             return res.status(201).json({
@@ -42,7 +58,7 @@ module.exports.userSignup = async function(req, res)  {
 			});
         }
         
-// add condition
+       // Otherwise customer is initially approved
 		isApproved=true;
         
 		const newUser=await User.create( { name:name, email:email,password: hashedPwd,userType: userType,isApproved:isApproved,loans:loans,phone:phone });
@@ -51,9 +67,10 @@ module.exports.userSignup = async function(req, res)  {
 
 		return res.status(201).json({
 			message: `Registration successful`,
-			// data:  {
-            //     token: jwt.sign(newUser.toJSON(), 'codeial', {expiresIn:  '1000000000'})
-            // }
+			data:  {
+                token: jwt.sign(newUser.toJSON(), 'codeial', {expiresIn:  '1000000000'})
+            },
+            id: user._id,
 		});
 
 	
@@ -67,29 +84,29 @@ module.exports.userSignup = async function(req, res)  {
 	}
 }
 
-// login for a user
+// Function for login for a user
 
 module.exports.login = async function(req, res){
 
     try{
+
+        // Check for user
         let user = await User.findOne({email: req.body.email});
-        if (!user){
-            return res.json(401, {
-                message: "Invalid Email or Password"
-			});
+             if (!user){
+                return res.json(401, {
+                 message: "Invalid Email or Password"
+			   });
 			
 		}
+        
+        // Compare the password
         let pwdMatch = await bcrypt.compare(req.body.password, user.password);
 			if (!pwdMatch){
 				return res.status(401).json({ message: "Invalid Email or Password" });
             }
 
-        
-
-		// Comparing entered password with stored password
-		
 			
-
+        // Check if user is approved
             if(user.isApproved==true){
 
                 return res.json(200, {
@@ -103,6 +120,8 @@ module.exports.login = async function(req, res){
                     
                 });
             }
+
+            // If its the agent then send the following message
             return res.json(202, {
                 message: 'Your approval request is still pending',
                 
@@ -118,60 +137,9 @@ module.exports.login = async function(req, res){
 }
 
 
-// send data
-
-// module.exports.sendData= async function(req,res){
-
-//     let user = await User.findById( req.params.id).select("-password");
-
-//     try{
-//     if (!user){
-//         return res.json(422, {
-//             message: "Invalid username "
-//         });
-        
-//     }
-
-//     if(user.userType=='customer'){
-        
-//         return res.json(200, {
-//             message: 'Here is the loan data ',
-//             data:   user.loans
-            
-//         })
-//     }
-
-//     if(user.userType=='agent'){
-        
-//         return res.json(200, {
-//             message: 'Here is the loan data',
-//             data:   user.loans
-            
-//         });
-//     }
- 
-//     return res.json(200, {
-//         message: 'Sign in successful',
-//         data:   user.loans
-        
-//     });
-    
-    
-
-        
-    
-
-// }catch(err){
-//     console.log('********', err);
-//     return res.json(500, {
-//         message: "Internal Server Error"
-//     });
-// }
-
-// }
 
 
-// list users
+//Function to list users
 
 module.exports.listUsers= async function(req,res){
 
@@ -180,11 +148,11 @@ module.exports.listUsers= async function(req,res){
     try{
     if (!user){
         return res.json(422, {
-            message: "Invalid username "
+            message: "Invalid user"
         });
         
     }
-
+    // A customer cannot list users
     if(user.userType=='customer'){
         
         return res.json(401, {
@@ -193,7 +161,7 @@ module.exports.listUsers= async function(req,res){
             
         })
     }
-
+    // An agent can only list down customers and not other agents
     const customer=await User.find({userType:"customer"}).select("-password");
     
 
@@ -205,6 +173,8 @@ module.exports.listUsers= async function(req,res){
             
         });
     }
+
+    // If its not an agent then its an admin and an admin can list down all the users
 
     const agent=await User.find({userType:"agent"}).select("-password");
     return res.json(200, {
@@ -237,6 +207,8 @@ module.exports.listUsers= async function(req,res){
 module.exports.agentRequestList=async function(req,res){
 
     try{
+
+        // Check for user
         let user = await User.findById(req.params.id);
 
         if (!user){
@@ -247,16 +219,13 @@ module.exports.agentRequestList=async function(req,res){
 		}
           
          
-        
+        // Only an admin can approve an agent
         
             if(user.userType=='admin'){
-                let agent = await User.find({isApproved:false}).select("-password");
-                    // Dont populate sensitive/redundant fields
-                   
-              
-             
                 
-			   
+                // We wouldnt want to show confidential information
+                let agent = await User.find({isApproved:false}).select("-password");
+                                  
                 return res.json(200, {
                     message: 'here is the list of agent requests',
                     data:  agent
@@ -280,13 +249,13 @@ module.exports.agentRequestList=async function(req,res){
     }
 }
 
-// agent request approve
+// Approve an agent
 
 module.exports.approveAgent = async function(req, res){
 
     try{
         let user = await User.findById(req.params.id);
-
+    // Check for user
         if (!user){
             return res.json(422, {
                 message: "Invalid user "
@@ -295,7 +264,7 @@ module.exports.approveAgent = async function(req, res){
 		}
 
 		
-			
+		//only an admin can approve a user 
 
             if(user.userType=='admin'){
 
@@ -307,7 +276,7 @@ module.exports.approveAgent = async function(req, res){
                     });
                 }
 
-          User.findByIdAndUpdate(req.body.agentId, { isApproved: true }, function (err, docs) { 
+             User.findByIdAndUpdate(req.body.agentId, { isApproved: true }, function (err, docs) { 
                      if (err){ 
                     console.log(err) 
                        } 
@@ -362,7 +331,9 @@ module.exports.updatePassword = async function(req, res){
 			if (!pwdMatch){
 				return res.status(401).json({ message: "wrong password" });
             }
-		
+        
+        //Encrypt new password 
+        
         const salt = await bcrypt.genSalt(10);
         const hashedPwd = await bcrypt.hash(req.body.password, salt);
 
@@ -370,12 +341,12 @@ module.exports.updatePassword = async function(req, res){
 
           User.findByIdAndUpdate(req.params.id, { password: hashedPwd }, function (err, docs) { 
                      if (err){ 
-                    console.log(err) 
+                          console.log(err) 
                        } 
                    else{ 
-                      console.log("Updated User : ", docs); 
+                         console.log("Updated User : ", docs); 
                        } 
-            });
+             });
                 
             
             return res.json(200, {

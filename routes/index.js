@@ -4,7 +4,7 @@ const passport = require("passport");
 
 
 
-// router.use("/loan", loanRoutes);
+console.log('router loaded');
 
 router.use('/user', require('./user'));
 

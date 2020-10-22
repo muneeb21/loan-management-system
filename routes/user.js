@@ -8,17 +8,12 @@ const userController = require("../controllers/api/v1/userController");
 
 router.use("/loan", loanRoutes);
 
+
+
 router.post("/signup", userController.userSignup);
 router.post("/login", userController.login);
 
-// router.get("/sendData", userController.sendData);
-// router.get("/list", userController.sendData);
 
-// router.get(
-// 	"/sendData",
-// 	passport.authenticate("jwt", { session: false }),
-// 	userController.sendData
-// );
 
 router.get(
 	"/listUsers/:id",

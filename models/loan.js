@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-
+// model schema for loan
 const loanSchema = new mongoose.Schema({
     
     user: {

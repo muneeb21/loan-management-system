@@ -9,11 +9,6 @@ const passportJwt = require('./config/passport-jwt-strategy');
 // middleware parser to get the form values as the body object in request 
 app.use(express.urlencoded());
 
-// using express router
-
-// const bcrypt=require('bcryptjs');
-
-
 
 
 // uncomment the below code once, run npm start then comment it again (its for manually entering admin)
@@ -51,7 +46,7 @@ app.use(express.urlencoded());
 
 
 
-
+// using express router
 app.use(express.json());
 
 

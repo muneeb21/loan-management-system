@@ -78,7 +78,7 @@ describe('CUSTOMER', () => {
                     res.body.message.should.be.eql('Loan request made successfully');
                     res.body.should.have.property('data');
                     
-                    // res.body.data.should.have.property('agents');
+                    
                     done();
                 });
         });
@@ -275,7 +275,7 @@ describe('AGENT', () => {
         });
     
         User.deleteOne({}, (err) => {
-             user = new User({ name: "agent", email: "agent", password: "agent",phone:"098754554612",userType:"agent",isApproved:true });
+             user = new User({ name: "agent", email: "agent", password: "agentpass",phone:"098754554612",userType:"agent",isApproved:true });
             user.save((err, user) => {
                 authToken = jwt.sign(user.toJSON(), "codeial", { expiresIn: 100000 })
                 done();
@@ -514,7 +514,7 @@ describe('AGENT', () => {
         });
     
         User.deleteOne({}, (err) => {
-             user = new User({ name: "agent", email: "agent", password: "agent",phone:"098754554612",userType:"agent",isApproved:false });
+             user = new User({ name: "agent", email: "agent", password: "agentpass",phone:"098754554612",userType:"agent",isApproved:false });
             user.save((err, user) => {
                 authToken = jwt.sign(user.toJSON(), "codeial", { expiresIn: 100000 })
                 done();
