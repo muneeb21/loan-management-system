@@ -81,15 +81,21 @@ An API which facilitates the working of a minimal loan management system
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss1.png?raw=true)
 
 
-**Working of API on postman by samples**
+***Working of API on postman by samples***
+
 
 > Signup<br>
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss2.png?raw=true)
+
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss3.png?raw=true)
 
->Agent Signup
+
+>Agent Signup<br/>
+
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss4.png?raw=true)
 
->Loan Request
+
+>Loan Request<br>
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss4.png?raw=true)
+
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss5.png?raw=true)
