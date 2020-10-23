@@ -73,30 +73,32 @@ An API which facilitates the working of a minimal loan management system
 
 **If can't set it up on docker**
 > Run npm init, setup the project install the dependencies and run npm start
-
+<br>
 **Run unit tests**
 - Install the dev dependencies: mocha, chai and chai http<br/>
 - Navigate to project directory and run npm test
 
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss1.png?raw=true)
 
+<br>
+<br/>
 
+# Working of API on postman (examples)
 
-# Working of API on postman by samples
+<br/>
 
+> Signup<br/>
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss2.png?raw=true)<br/>
 
-> Signup<br>
-![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss2.png?raw=true)
-
-![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss3.png?raw=true)
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss3.png?raw=true)<br/>
 
 
 >Agent Signup<br/>
 
-![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss4.png?raw=true)
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss4.png?raw=true)<br/>
 
 
 >Loan Request<br>
-![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss5.png?raw=true)
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss5.png?raw=true)<br/>
 
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss6.png?raw=true)
