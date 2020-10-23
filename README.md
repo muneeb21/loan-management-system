@@ -78,18 +78,18 @@ An API which facilitates the working of a minimal loan management system
 - Install the dev dependencies: mocha, chai and chai http<br/>
 - Navigate to project directory and run npm test
 
-![alt text](https://github.com/muneeb21/Nodejs-Authentication/blob/master/assets/screenshots/image2.png?raw=true)
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss1.png?raw=true)
 
 
 **Working of API on postman by samples**
 
-> Signup
-![alt text](https://github.com/muneeb21/Nodejs-Authentication/blob/master/assets/screenshots/image2.png?raw=true)
-![alt text](https://github.com/muneeb21/Nodejs-Authentication/blob/master/assets/screenshots/image1.png?raw=true)
+> Signup<br>
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss2.png?raw=true)
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss3.png?raw=true)
 
 >Agent Signup
-![alt text](https://github.com/muneeb21/Nodejs-Authentication/blob/master/assets/screenshots/image2.png?raw=true)
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss4.png?raw=true)
 
 >Loan Request
-![alt text](https://github.com/muneeb21/Nodejs-Authentication/blob/master/assets/screenshots/image2.png?raw=true)
-![alt text](https://github.com/muneeb21/Nodejs-Authentication/blob/master/assets/screenshots/image1.png?raw=true)
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss4.png?raw=true)
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss5.png?raw=true)
