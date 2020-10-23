@@ -96,6 +96,6 @@ An API which facilitates the working of a minimal loan management system
 
 
 >Loan Request<br>
-![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss4.png?raw=true)
-
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss5.png?raw=true)
+
+![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss6.png?raw=true)
