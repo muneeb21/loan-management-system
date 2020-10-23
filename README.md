@@ -15,10 +15,10 @@ An API which facilitates the working of a minimal loan management system
 - The value of interest rate would depend on the value of principlexxxxxxxxx<br/>
 - The loan can have 3 kinds of status: Approved, New or Rejected
 
-**Tech stack used**
+**Tech stack used**<br/>
   Nodejs, Express framework, Mongodb
 
-**Key modules used**
+**Key modules used**<br>
   Passport-jwt, Jsonwebtoken, Bcryptjs, Mocha, Chai   
 
 **Model Schemas**
@@ -81,7 +81,8 @@ An API which facilitates the working of a minimal loan management system
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss1.png?raw=true)
 
 
-***Working of API on postman by samples***
+
+# Working of API on postman by samples
 
 
 > Signup<br>
