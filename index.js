@@ -24,12 +24,12 @@ app.use(express.urlencoded());
 //         }
 //         else{
 //             const info={
-//                 email:"admin",
+//                 email:"admin123",
 //                 phone:9,
 //                 name:"admin",
 //                 password:hash,
 //                 loans:[],
-//                 userType:"admin",
+//                 userType:"admin123",
 //                 isApproved:true
 //             }
 //             User.create(info,function(err){

@@ -1,3 +1,4 @@
+#This file is running the implementing/running the tests on project
 FROM node:12
 
 # Create app directory
@@ -14,7 +15,7 @@ RUN npm install
 # RUN npm ci --only=production
 
 # Bundle app source
-COPY . /app
+COPY . .
 
 
 CMD [ "npm", "test" ]
