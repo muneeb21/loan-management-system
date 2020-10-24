@@ -52,16 +52,16 @@ An API which facilitates the working of a minimal loan management system
 
 > /users/signup<br />
 > /users/login<br />
-> /users/listUsers/:id<br />
-> /users/agentRequestList/:id<br />
-> /users//approveAgent/:id<br />
-> /users/updatePassword/:id<br />
-> /users/loan/newLoan/:id<br />
-> /users/loan/approveLoan/:id<br />
-> /users/loan/rejectLoan/:id<br />
-> /users/loan/editLoan/:id<br />
-> /users/loan/allLoans/:id<br />
-> /users/loan/loansbyFilter/:id<br />
+> /users/listUsers<br />
+> /users/agentRequestList<br />
+> /users//approveAgent<br />
+> /users/updatePassword<br />
+> /users/loan/newLoan<br />
+> /users/loan/approveLoan<br />
+> /users/loan/rejectLoan<br />
+> /users/loan/editLoan<br />
+> /users/loan/allLoans<br />
+> /users/loan/loansbyFilter<br />
 
 
 **Set up Project using Docker files**

@@ -16,25 +16,25 @@ router.post("/login", userController.login);
 
 
 router.get(
-	"/listUsers/:id",
+	"/listUsers",
 	passport.authenticate("jwt", { session: false }),
 	userController.listUsers
 );
 
 router.get(
-	"/agentRequestList/:id",
+	"/agentRequestList",
 	passport.authenticate("jwt", { session: false }),
 	userController.agentRequestList
 );
 
 router.post(
-	"/approveAgent/:id",
+	"/approveAgent",
 	passport.authenticate("jwt", { session: false }),
 	userController.approveAgent
 );
 
 router.post(
-	"/updatePassword/:id",
+	"/updatePassword",
 	passport.authenticate("jwt", { session: false }),
 	userController.updatePassword
 );

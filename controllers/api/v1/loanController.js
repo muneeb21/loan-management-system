@@ -47,7 +47,8 @@ module.exports.newLoanRequest= async function(req,res){
 
     try{
         //  if user does not exists then return
-        const user = await User.findById(req.params.id);
+        
+        const user = await User.findById(req.user._id);
         
 
            if (!user){
@@ -56,8 +57,7 @@ module.exports.newLoanRequest= async function(req,res){
                });
         
     }
-        //  console.log(req.body);
-
+        
         // Check for principle, do not accept values less than 10000
         if(req.body.principle<10000){
 
@@ -77,10 +77,9 @@ module.exports.newLoanRequest= async function(req,res){
         const status="NEW";
         const repaymentAmount=calculateAmount(principle,monthsToRepay,interestRate);
         const emi=repaymentAmount/monthsToRepay;
-        const id=req.params.id;
+        const id=req.user._id;
 
-        // console.log(principle,interestRate,monthsToRepay,status,repaymentAmount);
- 
+        
 
         //  You can create a loan only if you are customer or you are an approved agent
            if(user.userType=='customer'){
@@ -91,8 +90,7 @@ module.exports.newLoanRequest= async function(req,res){
 
         
 
-        // console.log(newRequest);
-
+    
         // Push the newly created loan in user
 
         user.loans.unshift(newRequest);
@@ -109,7 +107,7 @@ module.exports.newLoanRequest= async function(req,res){
 
     // check for agent
         if(user.userType=="agent" && user.isApproved==true){
-    //   const name= req.body.name;
+    
           const email= req.body.email;
           const tempUser= await User.findOne({email:email});
             if(tempUser){
@@ -159,7 +157,7 @@ module.exports.newLoanRequest= async function(req,res){
 module.exports.approveLoan = async function(req, res){
 
     try{
-        let user = await User.findById(req.params.id);
+        let user = await User.findById(req.user._id);
            
     // Check for user 
         if (!user){
@@ -205,7 +203,7 @@ module.exports.rejectLoan=async function(req,res){
 
     try{
         // Check for user
-        let user = await User.findById(req.params.id);
+        let user = await User.findById(req.user._id);
 
         if (!user){
             return res.json(422, {
@@ -251,7 +249,7 @@ module.exports.rejectLoan=async function(req,res){
 module.exports.editLoan=async function(req,res){
 
     try{
-        let user = await User.findById(req.params.id);
+        let user = await User.findById(req.user._id);
         // check for the user
         if (!user){
             return res.json(422, {
@@ -343,7 +341,7 @@ module.exports.allLoans=async function(req,res){
       
     try{
     // Check for user
-        let user = await User.findById(req.params.id);
+        let user = await User.findById(req.user._id);
 
         if (!user){
             return res.json(422, {
@@ -357,7 +355,7 @@ module.exports.allLoans=async function(req,res){
 	  		
     //  If it is a customer then he can only list his own loans
             if(user.userType=='customer'){
-                let customerLoans = await Loan.find({user:req.params.id}).select("-user");                  
+                let customerLoans = await Loan.find({user:req.user._id}).select("-user");                  
                 			   
                 return res.json(200, {
                     message: 'Here is the list of loans',
@@ -398,7 +396,7 @@ module.exports.LoansbyFilter=async function(req,res){
       
     try{
    // check for user 
-        let user = await User.findById(req.params.id);
+        let user = await User.findById(req.user._id);
 
         if (!user){
             return res.json(422, {
@@ -409,7 +407,7 @@ module.exports.LoansbyFilter=async function(req,res){
 
 	// If user is a customer then he can filter onlly his loans
             if(user.userType=='cutomer'){
-                let customerLoans = await Loan.find({user:req.params.id},{status:req.body.status}).select("-user");
+                let customerLoans = await Loan.find({user:req.user._id},{status:req.body.status}).select("-user");
               
              
                 return res.json(200, {

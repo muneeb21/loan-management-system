@@ -29,7 +29,7 @@ app.use(express.urlencoded());
 //                 name:"admin",
 //                 password:hash,
 //                 loans:[],
-//                 userType:"admin123",
+//                 userType:"admin",
 //                 isApproved:true
 //             }
 //             User.create(info,function(err){

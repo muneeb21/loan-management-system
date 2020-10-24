@@ -7,38 +7,38 @@ const loanController = require("../controllers/api/v1/loanController");
 //routes for loan releted quesrries
 
 router.post(
-	"/newLoan/:id",
+	"/newLoan",
 	passport.authenticate("jwt", { session: false }),
 	loanController.newLoanRequest
 );
 
 router.post(
-	"/approveLoan/:id",
+	"/approveLoan",
 	passport.authenticate("jwt", { session: false }),
 	loanController.approveLoan
 );
 
 router.post(
-	"/rejectLoan/:id",
+	"/rejectLoan",
 	passport.authenticate("jwt", { session: false }),
 	loanController.rejectLoan
 );
 
 router.post(
-	"/editLoan/:id",
+	"/editLoan",
 	passport.authenticate("jwt", { session: false }),
 	loanController.editLoan
 );
 
 
 router.get(
-	"/allLoans/:id",
+	"/allLoans",
 	passport.authenticate("jwt", { session: false }),
 	loanController.allLoans
 );
 
 router.post(
-	"/loansbyFilter/:id",
+	"/loansbyFilter",
 	passport.authenticate("jwt", { session: false }),
 	loanController.LoansbyFilter
 );

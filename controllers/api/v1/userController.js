@@ -112,7 +112,7 @@ module.exports.login = async function(req, res){
                 return res.json(200, {
                     message: 'Sign in successful, here is your token',
                     data:  {
-                        token: jwt.sign(user.toJSON(), 'codeial', {expiresIn:  '10000000'})
+                        token: jwt.sign(user.toJSON(), 'codeial', {expiresIn:  '2000000'})
                     
                     },
                     id: user._id,
@@ -143,7 +143,7 @@ module.exports.login = async function(req, res){
 
 module.exports.listUsers= async function(req,res){
 
-    let user = await User.findById(req.params.id);
+    let user = await User.findById(req.user._id);
 
     try{
     if (!user){
@@ -209,7 +209,7 @@ module.exports.agentRequestList=async function(req,res){
     try{
 
         // Check for user
-        let user = await User.findById(req.params.id);
+        let user = await User.findById(req.user._id);
 
         if (!user){
             return res.json(422, {
@@ -233,7 +233,7 @@ module.exports.agentRequestList=async function(req,res){
             }
 
 
-            i
+            
 
             return res.json(422, {
                 message: 'Unauthorised user!',
@@ -254,7 +254,7 @@ module.exports.agentRequestList=async function(req,res){
 module.exports.approveAgent = async function(req, res){
 
     try{
-        let user = await User.findById(req.params.id);
+        let user = await User.findById(req.user._id);
     // Check for user
         if (!user){
             return res.json(422, {
@@ -310,7 +310,7 @@ module.exports.approveAgent = async function(req, res){
 module.exports.updatePassword = async function(req, res){
 
     try{
-        let user = await User.findById(req.params.id);
+        let user = await User.findById(req.user._id);
 
         if (!user){
             return res.json(422, {
@@ -327,6 +327,15 @@ module.exports.updatePassword = async function(req, res){
 			});
         }
 
+         // Check the length of the password(it should be greater than 7)
+         if(req.body.password.length<7){
+            return res.status(401).json({
+				message:
+					"The password length is too small",
+			});
+
+        }
+
         let pwdMatch = await bcrypt.compare(req.body.prevPassword, user.password);
 			if (!pwdMatch){
 				return res.status(401).json({ message: "wrong password" });
@@ -339,7 +348,7 @@ module.exports.updatePassword = async function(req, res){
 
             
 
-          User.findByIdAndUpdate(req.params.id, { password: hashedPwd }, function (err, docs) { 
+          User.findByIdAndUpdate(req.user._id, { password: hashedPwd }, function (err, docs) { 
                      if (err){ 
                           console.log(err) 
                        } 
