@@ -34,7 +34,7 @@ An API which facilitates the working of a minimal loan management system
 - When agent would signup a request would to the the admin to approve the agent.
 - Admin and customer are by default approved but agent<br>
 - Agent can only login after being approved<br>
-- An instance of admin is created initially in the database(see the main index file)<br>
+- An instance of admin is created initially in the database(see the main index file, uncomment the mentioned code, run "npm start", comment the same code again and run "npm start",later the admin can change password if want to)<br>
 - All the users can update their passwords and its length should be greater than 6<br>
 - Passwords are encrypted before being stored<br>
 - Agents can list all customers and admin can list all users<br>
@@ -52,7 +52,7 @@ An API which facilitates the working of a minimal loan management system
 
 > /users/signup<br />
 > /users/login<br />
-> /users//listUsers/:id<br />
+> /users/listUsers/:id<br />
 > /users/agentRequestList/:id<br />
 > /users//approveAgent/:id<br />
 > /users/updatePassword/:id<br />
@@ -67,16 +67,17 @@ An API which facilitates the working of a minimal loan management system
 **Set up Project using Docker files**
 
 - Dockerfile.production (This is for main project)<br/>
-- Dockerfile.test (This is for running testcases)
-- Create an image for each by command docker build -t  {your username}/{name of app} {dockerfile name} .<br/>
-- Run the image with command docker run -p 49160:8000 -d {your username}/{name of app}
+- Dockerfile.test (This is for running testcases)<br/>
+- Create an image for each by command => "docker build -t  {your username}/{name of app} {dockerfile name} ."<br/>
+- Run the image with command => "docker run -p 49160:8000 -d {your username}/{name of app}"
 
 **If can't set it up on docker**
-> Run npm init, setup the project install the dependencies and run npm start
+> Run "npm init", setup the project install the dependencies and run "npm start"
 <br>
-**Run unit tests**
+
+**Run unit tests on Node**
 - Install the dev dependencies: mocha, chai and chai http<br/>
-- Navigate to project directory and run npm test
+- Navigate to project directory and run => "npm test"
 
 ![alt text](https://github.com/muneeb21/loan-management-system/blob/master/screenshots/ss1.png?raw=true)
 
