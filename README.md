@@ -32,7 +32,7 @@ An API which facilitates the working of a minimal loan management system
 - Only customers and agents can signup<br/>
 - Customer will be created in the database on signup<br>
 - When agent would signup a request would to the the admin to approve the agent.
-- Admin and customer are by default approved but agent<br>
+- Admin and customer are by default approved but not agent<br>
 - Agent can only login after being approved<br>
 - An instance of admin is created initially in the database(see the main index file, uncomment the mentioned code, run "npm start", comment the same code again and run "npm start",later the admin can change password if want to)<br>
 - All the users can update their passwords and its length should be greater than 6<br>
