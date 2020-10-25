@@ -37,11 +37,11 @@ describe('User', () => {
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(userIncorrect)
                 .end((err, res) => {
-                    // console.log(res.body);
+                    
                     res.should.have.status(500);
                     res.body.should.have.property("message");
                     res.body.message.should.be.eql("Internal Server Error");
-                    // res.body.status.should.be.eql(500);
+                    
                     done();
                 });
         });
@@ -159,13 +159,13 @@ describe('Admin', () => {
 
 
     // Test get list of user route
-    describe('/GET user/listUsers/:id', () => {
+    describe('/GET user/listUsers', () => {
         
 
         // Authorization failed due to not passing jwt token in header
-        it('it should return a message not Authorized -> USER LIST', (done) => {
+        it('it should return a message not Authorized -> UPDATE PASSWORD', (done) => {
             chai.request(server)
-                .get('/user/listUsers/'+user._id)
+                .get('/user/listUsers')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .end((err, res) => {
                     // console.log(res.body);
@@ -181,7 +181,7 @@ describe('Admin', () => {
         // List Users Successfully
         it('It should list all the users successfully -> LIST USERS', (done) => {
             chai.request(server)
-                .get('/user/listUsers/'+user._id)
+                .get('/user/listUsers')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
                 .end((err, res) => {
@@ -197,20 +197,7 @@ describe('Admin', () => {
                 });
         });
         
-        // Listing users without sending id in params
-        it('It should send 404 -> LIST USERS', (done) => {
-            chai.request(server)
-                .get('/user/listUsers')
-                .set('content-type', 'application/x-www-form-urlencoded')
-                .set({ "Authorization": `Bearer ${authToken}` })
-                .end((err, res) => {
-                    // console.log(res.body);
-                    res.should.have.status(404);
-                    
-                    
-                    done();
-                });
-        });
+        
 
         
 
@@ -224,13 +211,13 @@ describe('Admin', () => {
 
 
     //  Test for listing all the agent approval requests
-    describe('/GET user/agentRequestList/:id', () => {
+    describe('/GET user/agentRequestList', () => {
         
 
         // Authorization failed due to not passing jwt token in header
         it('it should return a message not Authorized ->AGENT APPROVAL LIST', (done) => {
             chai.request(server)
-                .get('/user/agentRequestList/'+user._id)
+                .get('/user/agentRequestList')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .end((err, res) => {
                     // console.log(res.body);
@@ -244,7 +231,7 @@ describe('Admin', () => {
         // Authorization failed due to not passing wrong jwt token in header
         it('it should return a message not Authorized ->AGENT APPROVAL LIST', (done) => {
             chai.request(server)
-                .get('/user/agentRequestList/'+user._id)
+                .get('/user/agentRequestList')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer` })
                 .end((err, res) => {
@@ -261,7 +248,7 @@ describe('Admin', () => {
         // List Agent Approval Requests
         it('It should list all the Agent Approval Requests -> LIST APPROVAL REQUEST', (done) => {
             chai.request(server)
-                .get('/user/agentRequestList/'+user._id)
+                .get('/user/agentRequestList')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
                 .end((err, res) => {
@@ -276,27 +263,90 @@ describe('Admin', () => {
                 });
         });
     
-    //  Not sending user id in params
-        it('It should send 404 -> LIST APPROVAL REQUEST', (done) => {
+
+        
+       
+
+    });
+
+        // Test to update password of user
+        describe('/POST user/updatePassword', () => {
+        
+
+            // Authorization failed due to not passing jwt token in header
+            it('it should return a message not Authorized -> UPDATE PASSWORD', (done) => {
+                chai.request(server)
+                    .post('/user/updatePassword')
+                    .set('content-type', 'application/x-www-form-urlencoded')
+                    .end((err, res) => {
+                        // console.log(res.body);
+                        res.should.have.status(401);
+                        res.body.should.be.a('object');
+                        done();
+                    });
+            });
+    
+            
+           
+    
+            // Update password of user with incorrect confirm password Should throw error.
+        it('it should say password and confirm password not equal -> UPDATE PASSWORD', (done) => {
             chai.request(server)
-                .get('/user/agentRequestList')
+                .post('/user/updatePassword')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
+                .send({"password":"qwertyui","confirmPassword":"qasd"})
                 .end((err, res) => {
-                    // console.log(res.body);
-                    res.should.have.status(404);
+        
+                    res.should.have.status(422); 
+                    res.body.should.have.property('message');
+                    res.body.message.should.be.eql('Password and confirm-password not equal');
                     
-                   
+                    done();
+                });
+        });
+            
+           
+           // Update password of user with a short password Should throw error.
+           it('it should say password length is too small -> UPDATE PASSWORD', (done) => {
+            chai.request(server)
+                .post('/user/updatePassword')
+                .set('content-type', 'application/x-www-form-urlencoded')
+                .set({ "Authorization": `Bearer ${authToken}` })
+                .send({"password":"qwer","confirmPassword":"qwer"})
+                .end((err, res) => {
+        
+                    res.should.have.status(422);
+                    res.body.should.have.property('message');
+                    res.body.message.should.be.eql('The password length is too small');
                     
                     
                     done();
                 });
         });
 
+           // Update password of user successfully
+           it('it should say successfully updated password -> UPDATE PASSWORD', (done) => {
+            chai.request(server)
+                .post('/user/updatePassword')
+                .set('content-type', 'application/x-www-form-urlencoded')
+                .set({ "Authorization": `Bearer ${authToken}` })
+                .send({"password":"qwertyui","confirmPassword":"qwertyui"})
+                .end((err, res) => {
         
-       
-
-    });
+                    res.should.have.status(200); 
+                    res.body.should.have.property('message');
+                    res.body.message.should.be.eql('Password Updated Successfully');
+                    
+                    done();
+                });
+        });
+    
+            
+    
+    
+        });
+    
 
 });
 

@@ -41,13 +41,13 @@ describe('CUSTOMER', () => {
 
 
     // Test to make a new loan request
-    describe('/POST user/loan/newLoan/:id', () => {
+    describe('/POST user/loan/newLoan', () => {
         
 
         // Authorization failed due to not passing jwt token in header
         it('it should return a message not Authorized -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ` })
                 .end((err, res) => {
@@ -66,7 +66,7 @@ describe('CUSTOMER', () => {
         // Make a loan request successfully 
         it('It should make a loan request successfully -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
                 .send({"principle":"15000","monthsToRepay":"10"})
@@ -83,26 +83,13 @@ describe('CUSTOMER', () => {
                 });
         });
         
-        // Requesting Loan without sending id in params
-        it('It should send 404 -> LOAN REQUEST', (done) => {
-            chai.request(server)
-                .post('/user/loan/newLoan')
-                .set('content-type', 'application/x-www-form-urlencoded')
-                .set({ "Authorization": `Bearer ${authToken}` })
-                .end((err, res) => {
-                    // console.log(res.body);
-                    res.should.have.status(404);
-                    
-                    
-                    done();
-                });
-        });
+        
 
         // Requesting loan request with smaller principle amount
 
         it('It should not make a loan request -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
                 .send({"principle":"1500","monthsToRepay":"10"})
@@ -125,13 +112,13 @@ describe('CUSTOMER', () => {
 
 // Listing all loans
 
-   describe('/GET user/loan/allLoans/:id', () => {
+   describe('/GET user/loan/allLoans', () => {
         
 
     // Authorization failed due to not passing jwt token in header
     it('it should return a message not Authorized -> LIST LOANS', (done) => {
         chai.request(server)
-            .get('/user/loan/allLoans/'+user._id)
+            .get('/user/loan/allLoans')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ` })
             .end((err, res) => {
@@ -150,7 +137,7 @@ describe('CUSTOMER', () => {
     // List all the loans successfully
     it('It should list all the loans successfully -> LIST LOANS', (done) => {
         chai.request(server)
-            .get('/user/loan/allLoans/'+user._id)
+            .get('/user/loan/allLoans')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ${authToken}` })
             .end((err, res) => {
@@ -166,20 +153,7 @@ describe('CUSTOMER', () => {
             });
     });
     
-    // Requesting Loan without sending id in params
-    it('It should send 404 -> LIST LOANS', (done) => {
-        chai.request(server)
-            .get('/user/loan/allLoan')
-            .set('content-type', 'application/x-www-form-urlencoded')
-            .set({ "Authorization": `Bearer ${authToken}` })
-            .end((err, res) => {
-                // console.log(res.body);
-                res.should.have.status(404);
-                
-                
-                done();
-            });
-    });
+   
 
     
 
@@ -190,13 +164,13 @@ describe('CUSTOMER', () => {
 
        // Listing all loans
 
-   describe('/POST user/loan/loansbyFilter/:id', () => {
+   describe('/POST user/loan/loansbyFilter', () => {
         
 
     // Authorization failed due to not passing jwt token in header
     it('it should return a message not Authorized -> FILTER LOANS', (done) => {
         chai.request(server)
-            .post('/user/loan/loansbyFilter/'+user._id)
+            .post('/user/loan/loansbyFilter')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ` })
             .end((err, res) => {
@@ -215,7 +189,7 @@ describe('CUSTOMER', () => {
     // List all the loans according to a filter successfully
     it('It should list all the loans successfully according to a filter-> FILTER LOANS', (done) => {
         chai.request(server)
-            .post('/user/loan/loansbyFilter/'+user._id)
+            .post('/user/loan/loansbyFilter')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ${authToken}` })
             .send({status:"NEW"})
@@ -232,20 +206,6 @@ describe('CUSTOMER', () => {
             });
     });
     
-    // Requesting Loan without sending id in params
-    it('It should send 404 -> LIST LOANS', (done) => {
-        chai.request(server)
-            .post('/user/loan/allLoan')
-            .set('content-type', 'application/x-www-form-urlencoded')
-            .set({ "Authorization": `Bearer ${authToken}` })
-            .end((err, res) => {
-                // console.log(res.body);
-                res.should.have.status(404);
-                
-                
-                done();
-            });
-    });
 
     
 
@@ -286,13 +246,13 @@ describe('AGENT', () => {
 
 
     // Test to make a new loan request
-    describe('/POST user/loan/newLoan/:id', () => {
+    describe('/POST user/loan/newLoan', () => {
         
 
         // Authorization failed due to not passing jwt token in header
-        it('it should return a message not Authorized -> LOAN REQUEST', (done) => {
+        it('it should return a message not Authorized***** -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ` })
                 .end((err, res) => {
@@ -311,7 +271,7 @@ describe('AGENT', () => {
         // Make a loan request successfully if Agent is approved there exists a user with an email
         it('It should make a loan request successfully -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
                 .send({email:"ascfg",principle:"15000","monthsToRepay":"10"})
@@ -328,26 +288,12 @@ describe('AGENT', () => {
                 });
         });
         
-        // Requesting Loan without sending id in params
-        it('It should send 404 -> LOAN REQUEST', (done) => {
-            chai.request(server)
-                .post('/user/loan/newLoan')
-                .set('content-type', 'application/x-www-form-urlencoded')
-                .set({ "Authorization": `Bearer ${authToken}` })
-                .end((err, res) => {
-                    // console.log(res.body);
-                    res.should.have.status(404);
-                    
-                    
-                    done();
-                });
-        });
 
         // Requesting loan request with smaller principle amount
 
         it('It should not make a loan request -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
                 .send({"principle":"1500","monthsToRepay":"10"})
@@ -370,13 +316,13 @@ describe('AGENT', () => {
 
 // Listing all loans
 
-   describe('/GET user/loan/allLoans/:id', () => {
+   describe('/GET user/loan/allLoans', () => {
         
 
     // Authorization failed due to not passing jwt token in header
     it('it should return a message not Authorized -> LIST LOANS', (done) => {
         chai.request(server)
-            .get('/user/loan/allLoans/'+user._id)
+            .get('/user/loan/allLoans')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ` })
             .end((err, res) => {
@@ -395,7 +341,7 @@ describe('AGENT', () => {
     // List all the loans successfully
     it('It should list all the loans successfully -> LIST LOANS', (done) => {
         chai.request(server)
-            .get('/user/loan/allLoans/'+user._id)
+            .get('/user/loan/allLoans')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ${authToken}` })
             .end((err, res) => {
@@ -411,20 +357,7 @@ describe('AGENT', () => {
             });
     });
     
-    // Requesting Loan without sending id in params
-    it('It should send 404 -> LIST LOANS', (done) => {
-        chai.request(server)
-            .get('/user/loan/allLoan')
-            .set('content-type', 'application/x-www-form-urlencoded')
-            .set({ "Authorization": `Bearer ${authToken}` })
-            .end((err, res) => {
-                // console.log(res.body);
-                res.should.have.status(404);
-                
-                
-                done();
-            });
-    });
+    
 
     
 
@@ -435,13 +368,13 @@ describe('AGENT', () => {
 
        // Listing all loans
 
-   describe('/POST user/loan/loansbyFilter/:id', () => {
+   describe('/POST user/loan/loansbyFilter', () => {
         
 
     // Authorization failed due to not passing jwt token in header
     it('it should return a message not Authorized -> FILTER LOANS', (done) => {
         chai.request(server)
-            .post('/user/loan/loansbyFilter/'+user._id)
+            .post('/user/loan/loansbyFilter')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ` })
             .end((err, res) => {
@@ -460,7 +393,7 @@ describe('AGENT', () => {
     // List all the loans according to a filter successfully
     it('It should list all the loans successfully according to a filter-> FILTER LOANS', (done) => {
         chai.request(server)
-            .post('/user/loan/loansbyFilter/'+user._id)
+            .post('/user/loan/loansbyFilter')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ${authToken}` })
             .send({status:"NEW"})
@@ -477,20 +410,7 @@ describe('AGENT', () => {
             });
     });
     
-    // Requesting Loan without sending id in params
-    it('It should send 404 -> LIST LOANS', (done) => {
-        chai.request(server)
-            .post('/user/loan/allLoan')
-            .set('content-type', 'application/x-www-form-urlencoded')
-            .set({ "Authorization": `Bearer ${authToken}` })
-            .end((err, res) => {
-                // console.log(res.body);
-                res.should.have.status(404);
-                
-                
-                done();
-            });
-    });
+    
 
     
 
@@ -525,13 +445,13 @@ describe('AGENT', () => {
 
 
     // Test to make a new loan request
-    describe('/POST user/loan/newLoan/:id', () => {
+    describe('/POST user/loan/newLoan', () => {
         
 
         // Authorization failed due to not passing jwt token in header
         it('it should return a message not Authorized -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ` })
                 .end((err, res) => {
@@ -550,7 +470,7 @@ describe('AGENT', () => {
         // Make a loan request successfully if Agent 
         it('It should make a loan request successfully -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
                 .send({email:"ascfg",principle:"15000","monthsToRepay":"10"})
@@ -565,26 +485,13 @@ describe('AGENT', () => {
                 });
         });
         
-        // Requesting Loan without sending id in params
-        it('It should send 404 -> LOAN REQUEST', (done) => {
-            chai.request(server)
-                .post('/user/loan/newLoan')
-                .set('content-type', 'application/x-www-form-urlencoded')
-                .set({ "Authorization": `Bearer ${authToken}` })
-                .end((err, res) => {
-                    // console.log(res.body);
-                    res.should.have.status(404);
-                    
-                    
-                    done();
-                });
-        });
+        
 
         // Requesting loan request with smaller principle amount
 
         it('It should not make a loan request -> LOAN REQUEST', (done) => {
             chai.request(server)
-                .post('/user/loan/newLoan/'+user._id)
+                .post('/user/loan/newLoan')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .set({ "Authorization": `Bearer ${authToken}` })
                 .send({"principle":"1500","monthsToRepay":"10"})
@@ -607,13 +514,13 @@ describe('AGENT', () => {
 
 // Listing all loans
 
-   describe('/GET user/loan/allLoans/:id', () => {
+   describe('/GET user/loan/allLoans', () => {
         
 
     // Authorization failed due to not passing jwt token in header
     it('it should return a message not Authorized -> LIST LOANS', (done) => {
         chai.request(server)
-            .get('/user/loan/allLoans/'+user._id)
+            .get('/user/loan/allLoans')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ` })
             .end((err, res) => {
@@ -632,7 +539,7 @@ describe('AGENT', () => {
     // List all the loans successfully only if agent approved
     it('It should list all the loans successfully -> LIST LOANS', (done) => {
         chai.request(server)
-            .get('/user/loan/allLoans/'+user._id)
+            .get('/user/loan/allLoans')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ${authToken}` })
             .end((err, res) => {
@@ -648,20 +555,7 @@ describe('AGENT', () => {
             });
     });
     
-    // Requesting Loan without sending id in params
-    it('It should send 404 -> LIST LOANS', (done) => {
-        chai.request(server)
-            .get('/user/loan/allLoan')
-            .set('content-type', 'application/x-www-form-urlencoded')
-            .set({ "Authorization": `Bearer ${authToken}` })
-            .end((err, res) => {
-                // console.log(res.body);
-                res.should.have.status(404);
-                
-                
-                done();
-            });
-    });
+    
 
     
 
@@ -672,13 +566,13 @@ describe('AGENT', () => {
 
        // Listing all loans
 
-   describe('/POST user/loan/loansbyFilter/:id', () => {
+   describe('/POST user/loan/loansbyFilter', () => {
         
 
     // Authorization failed due to not passing jwt token in header
     it('it should return a message not Authorized -> FILTER LOANS', (done) => {
         chai.request(server)
-            .post('/user/loan/loansbyFilter/'+user._id)
+            .post('/user/loan/loansbyFilter')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ` })
             .end((err, res) => {
@@ -697,7 +591,7 @@ describe('AGENT', () => {
     // List all the loans according to a filter successfully if agent approved
     it('It should list all the loans successfully according to a filter-> FILTER LOANS', (done) => {
         chai.request(server)
-            .post('/user/loan/loansbyFilter/'+user._id)
+            .post('/user/loan/loansbyFilter')
             .set('content-type', 'application/x-www-form-urlencoded')
             .set({ "Authorization": `Bearer ${authToken}` })
             .send({status:"NEW"})
@@ -714,20 +608,7 @@ describe('AGENT', () => {
             });
     });
     
-    // Requesting Loan without sending id in params
-    it('It should send 404 -> LIST LOANS', (done) => {
-        chai.request(server)
-            .post('/user/loan/allLoan')
-            .set('content-type', 'application/x-www-form-urlencoded')
-            .set({ "Authorization": `Bearer ${authToken}` })
-            .end((err, res) => {
-                // console.log(res.body);
-                res.should.have.status(404);
-                
-                
-                done();
-            });
-    });
+  
 
     
 

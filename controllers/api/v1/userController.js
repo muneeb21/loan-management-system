@@ -321,7 +321,7 @@ module.exports.updatePassword = async function(req, res){
         
         if(req.body.password!=req.body.confirmPassword){
 
-            return res.status(400).json({
+            return res.status(422).json({
 				message:
 					"Password and confirm-password not equal",
 			});
@@ -329,17 +329,14 @@ module.exports.updatePassword = async function(req, res){
 
          // Check the length of the password(it should be greater than 7)
          if(req.body.password.length<7){
-            return res.status(401).json({
+            return res.status(422).json({
 				message:
 					"The password length is too small",
 			});
 
         }
 
-        let pwdMatch = await bcrypt.compare(req.body.prevPassword, user.password);
-			if (!pwdMatch){
-				return res.status(401).json({ message: "wrong password" });
-            }
+        
         
         //Encrypt new password 
         
